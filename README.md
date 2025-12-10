@@ -12,9 +12,8 @@
 ## Sub goals
 
 - Simplicity is key. Only have five hours so there is no time for anything fancy. I will use:
-  - Go for all logic. Server-side rendered pages with just plain HTML + CSS.
+  - Go for all logic. Server-side rendered pages with just plain HTML. No CSS.
   - Gorm as the ORM layer. Although the database usage will be super simple I'd like to have an abstraction layer to allow for extensibility. And I need something to do migrations which I'll need for the schema and seeding the data.
-  - [Tachyons](https://tachyons.io/) for basic front-end styling. External style links only (not interested in hosting assets).
   - Docker builds.
   - Github Actions for CI/CD pipeline.
   - AWS for IaaS. I would like to learn a bit more Azure at this stage but just don't think there's time for it.
@@ -26,3 +25,10 @@
 ## Non goals
 
 - Upon re-reading the specs there is no need for querying. Elastic/Opensearch was completely out of the question due to time constraints, but now I am realising I don't even need `tsvector/tsquery` or even `LIKE` queries.
+- No CSS.
+
+## Work log
+
+- Created a simple program structure in Go, table schema, just enough to get an application started.
+- Created the Dockerfile.
+- Used Copilot to create a basic CI/CD pipeline and Dependabot configuration.
