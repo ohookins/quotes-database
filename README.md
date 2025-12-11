@@ -31,5 +31,5 @@
 
 - Created a simple program structure in Go, table schema, just enough to get an application started.
 - Created the Dockerfile.
-- Used Copilot to create a basic CI/CD pipeline and Dependabot configuration.
-- Used Copilot to generate the Terraform boilerplate and a basic Github Actions pipeline for infrastructure.
+- Created a basic CI/CD pipeline and Dependabot configuration (Copilot aided).
+- Generate the Terraform boilerplate and a basic Github Actions pipeline for infrastructure (Copilot aided).
