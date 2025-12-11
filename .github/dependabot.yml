@@ -1,9 +1,10 @@
-# Dependabot configuration for Go modules
-# Checks for updates to go.mod and go.sum daily
-
 version: 2
 updates:
   - package-ecosystem: "gomod"
     directory: "/"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "terraform"
+    directory: "/infra"
     schedule:
       interval: "daily"
