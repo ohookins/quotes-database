@@ -37,7 +37,6 @@ resource "aws_subnet" "private" {
 
 data "aws_availability_zones" "available" {}
 
-
 # Use the new regional NAT gateway for flexibility
 resource "aws_nat_gateway" "nat" {
   vpc_id            = aws_vpc.main.id
