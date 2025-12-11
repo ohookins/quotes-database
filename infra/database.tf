@@ -1,4 +1,7 @@
-resource "random_pet" "database_username" {}
+resource "random_pet" "database_username" {
+  separator = ""
+}
+
 resource "random_password" "database_password" {
   length  = 32
   special = false
