@@ -2,7 +2,7 @@
 # - terraform plan
 # - terraform apply (default branch only)
 
-name: Build and Push Docker image
+name: Build and Deploy
 
 on:
   push:
