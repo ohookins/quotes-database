@@ -32,5 +32,6 @@
 - Created a simple program structure in Go, table schema, just enough to get an application started.
 - Created the Dockerfile.
 - Created a basic CI/CD pipeline and Dependabot configuration (Copilot aided).
-- Generate the Terraform boilerplate and a basic Github Actions pipeline for infrastructure (Copilot aided).
-- Generate a Terraform VPC networking boilerplate configuration (Copilot aided).
+- Generated the Terraform boilerplate and a basic Github Actions pipeline for infrastructure (Copilot aided).
+- Generated a Terraform VPC networking boilerplate configuration (Copilot aided).
+- Created the database cluster, using serverless Aurora (PG compatible).
