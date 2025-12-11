@@ -73,6 +73,4 @@ jobs:
 
       - name: Terraform Plan
         working-directory: infra
-        env:
-          TF_LOG: debug
         run: terraform plan
