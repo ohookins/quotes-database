@@ -13,6 +13,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
     outputs:
       image_url: ${{ steps.export_image_url.outputs.image_url }}
     steps:
