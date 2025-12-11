@@ -33,3 +33,4 @@
 - Created the Dockerfile.
 - Created a basic CI/CD pipeline and Dependabot configuration (Copilot aided).
 - Generate the Terraform boilerplate and a basic Github Actions pipeline for infrastructure (Copilot aided).
+- Generate a Terraform VPC networking boilerplate configuration (Copilot aided).
