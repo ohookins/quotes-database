@@ -13,6 +13,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
     outputs:
       image_url: ${{ steps.export_image_url.outputs.image_url }}
     steps:
@@ -30,18 +31,29 @@ jobs:
         id: timestamp
         run: echo "tag=$(date +'%Y-%m-%d_%H-%M')" >> "$GITHUB_OUTPUT"
 
+      - name: Configure AWS credentials (assume role)
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ secrets.DEPLOYER_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - uses: aws-actions/amazon-ecr-login@v2
+        id: ecr-login
+        name: Logging in to ECR
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository }}:${{ steps.timestamp.outputs.tag }}
+          tags: |
+            ghcr.io/${{ github.repository }}:${{ steps.timestamp.outputs.tag }}
+            ${{ secrets.ECR_REPO }}:${{ steps.timestamp.outputs.tag }}
 
       - name: Export Docker image URL
         id: export_image_url
         run: |
-          echo "image_url=ghcr.io/${{ github.repository }}:${{ steps.timestamp.outputs.tag }}" >> "$GITHUB_OUTPUT"
-
+          echo "image_url=${{ secrets.ECR_REPO }}:${{ steps.timestamp.outputs.tag }}" >> "$GITHUB_OUTPUT"
 
   tf-plan:
     needs: build-and-push
