@@ -27,7 +27,7 @@ func migrate(db *gorm.DB) {
 
 	// Take out advisory lock in the database to prevent simultaneous migrations.
 	log.Println("acquiring advisory lock on database")
-	db.Raw("SELECT pg_try_advisory_lock(0)").Scan(lock)
+	db.Raw("SELECT pg_try_advisory_lock(0)").Scan(&lock)
 	if !lock {
 		log.Printf("failed to acquire log, skipping migration")
 		return
