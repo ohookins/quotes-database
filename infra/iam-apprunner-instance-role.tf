@@ -7,7 +7,7 @@ data "aws_iam_policy_document" "apprunner_instance_assume_role" {
   statement {
     principals {
       type        = "Service"
-      identifiers = ["tasks.apprunner.aws.com"]
+      identifiers = ["tasks.apprunner.amazonaws.com"]
     }
     actions = ["sts:AssumeRole"]
   }
