@@ -4,13 +4,19 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func main() {
-	dsn := "host=localhost user=gorm password=gorm dbname=gorm port=5432 sslmode=disable"
+	var dsn string
+	var ok bool
+	if dsn, ok = os.LookupEnv("DSN"); !ok {
+		dsn = "host=localhost user=gorm password=gorm dbname=gorm port=5432 sslmode=disable"
+	}
+
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)

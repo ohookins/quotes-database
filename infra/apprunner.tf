@@ -6,9 +6,9 @@ resource "aws_apprunner_service" "main" {
       image_configuration {
         port = "8080"
 
-        # runtime_environment_secrets = {
-        # TODO: DB Config
-        # }
+        runtime_environment_secrets = {
+          DSN = aws_secretsmanager_secret.quotes_database_dsn.arn
+        }
       }
       image_identifier      = var.image_url
       image_repository_type = "ECR"
@@ -106,4 +106,13 @@ data "aws_iam_policy_document" "apprunner_ecr_access_policy" {
     ]
     resources = [aws_ecr_repository.main.arn]
   }
+}
+
+resource "aws_secretsmanager_secret" "quotes_database_dsn" {
+  name = "quotes-database-dsn"
+}
+
+resource "aws_secretsmanager_secret_version" "quotes_database_dsn" {
+  secret_id     = aws_secretsmanager_secret.quotes_database_dsn.id
+  secret_string = local.dsn
 }
