@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -34,18 +33,20 @@ func migrate(db *gorm.DB) {
 	}
 
 	// Auto-migrate the schema which should be idempotent
+	log.Println("migrating database schema")
 	db.AutoMigrate(&Quote{})
 
 	// Ingest data here
+	log.Println("ingesting quote data")
 	time.Sleep(5 * time.Second)
 
 	// Release lock
+	log.Println("removing advisory lock on database")
 	db.Raw("SELECT pg_advisory_unlock(0)")
 }
 
 func renderQuote(text string) ([]byte, error) {
-	bgURL := fmt.Sprintf("https://source.unsplash.com/random/1600x900?sig=%d", time.Now().UnixNano())
-	data := struct{ BackgroundURL, Text string }{bgURL, text}
+	data := struct{ Text string }{text}
 
 	tmpl, err := template.ParseFiles(quoteTemplatePath)
 	if err != nil {

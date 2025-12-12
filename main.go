@@ -13,15 +13,14 @@ import (
 func logRequest(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		next.ServeHTTP(w, r)
-		log.Printf("%s %s %s, %d bytes served\n", r.Method, r.RequestURI, r.Response.Status, r.Response.ContentLength)
+		log.Printf("%s %s\n", r.Method, r.RequestURI)
 	})
 }
 
 func main() {
 	// Set up database from environment, or default to local database for testing.
-	var dsn string
-	var ok bool
-	if dsn, ok = os.LookupEnv("DSN"); !ok {
+	dsn, ok := os.LookupEnv("DSN")
+	if !ok {
 		dsn = "host=localhost user=gorm password=gorm dbname=gorm port=5432 sslmode=disable"
 	}
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})

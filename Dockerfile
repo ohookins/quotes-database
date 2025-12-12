@@ -10,5 +10,6 @@ FROM golang:1.24-alpine AS final
 
 COPY --from=builder /app/app /app/app
 COPY quote.html.tmpl /app/
+WORKDIR /app
 
 ENTRYPOINT [ "/app/app" ]
