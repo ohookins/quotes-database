@@ -1,14 +1,17 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
-	"io"
+	"html/template"
 	"log"
 	"net/http"
 	"time"
 
 	"gorm.io/gorm"
 )
+
+const quoteTemplatePath = "quote.html.tmpl"
 
 type quoteHandler struct {
 	db *gorm.DB
@@ -40,8 +43,47 @@ func migrate(db *gorm.DB) {
 	db.Raw("SELECT pg_advisory_unlock(0)")
 }
 
+func renderQuote(text string) ([]byte, error) {
+	bgURL := fmt.Sprintf("https://source.unsplash.com/random/1600x900?sig=%d", time.Now().UnixNano())
+	data := struct{ BackgroundURL, Text string }{bgURL, text}
+
+	tmpl, err := template.ParseFiles(quoteTemplatePath)
+	if err != nil {
+		return []byte{}, err
+	}
+
+	var buf bytes.Buffer
+	if err := tmpl.Execute(&buf, data); err != nil {
+		return []byte{}, err
+	}
+
+	return buf.Bytes(), nil
+}
+
 func (q quoteHandler) handleRequest(w http.ResponseWriter, req *http.Request) {
-	var count int64
-	q.db.Model(&Quote{}).Count(&count)
-	io.WriteString(w, fmt.Sprintf("%d records\n", count))
+	req.Body.Close()
+
+	// Prevent caching
+	w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate")
+	w.Header().Set("Pragma", "no-cache")
+	w.Header().Set("Expires", "0")
+	w.Header().Set("Surrogate-Control", "no-store")
+
+	// var count int64
+	// q.db.Model(&Quote{}).Count(&count)
+	// io.WriteString(w, fmt.Sprintf("%d records\n", count))
+
+	// Placeholder
+	quote := `I used to work in a fire hydrant factory.  You couldn't park anywhere near
+the place.
+		-- Steven Wright
+`
+	responseBody, err := renderQuote(quote)
+	if err != nil {
+		log.Printf("error rendering template: %v", err)
+		w.WriteHeader(500)
+		return
+	}
+
+	w.Write(responseBody)
 }

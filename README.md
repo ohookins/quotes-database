@@ -40,3 +40,4 @@
 - Completed the AppRunner configuration with IAM roles and a secret for database access. App connects to the database now.
 - Split code logic out to a separate struct for handling user requests, start planning database structure migration / data ingestion. Basic request logging.
 - Outline of data ingestion with safety via advisory locking.
+- Add simple HTML page with placeholder quote (Copilot aided).
