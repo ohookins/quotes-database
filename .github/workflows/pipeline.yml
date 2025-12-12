@@ -15,7 +15,7 @@ jobs:
       packages: write
       id-token: write
     outputs:
-      image_url: ${{ steps.export_image_url.outputs.image_url }}
+      tag: ${{ steps.timestamp.outputs.tag }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -50,17 +50,14 @@ jobs:
             ghcr.io/${{ github.repository }}:${{ steps.timestamp.outputs.tag }}
             ${{ secrets.ECR_REPO }}:${{ steps.timestamp.outputs.tag }}
 
-      - name: Export Docker image URL
-        id: export_image_url
-        run: |
-          echo "image_url=${{ secrets.ECR_REPO }}:${{ steps.timestamp.outputs.tag }}" >> "$GITHUB_OUTPUT"
-
   tf-plan:
     needs: build-and-push
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
+    env:
+      image_url: ${{ secrets.ECR_REPO }}:${{ needs.build-and-push.outputs.tag }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -84,6 +81,8 @@ jobs:
 
       - name: Terraform Plan
         working-directory: infra
+        env:
+          TF_VAR_image_url: ${{ env.image_url }}
         run: terraform plan
 
   tf-apply:
@@ -116,4 +115,6 @@ jobs:
 
       - name: Terraform Apply
         working-directory: infra
+        env:
+          TF_VAR_image_url: ${{ needs.build-and-push.outputs.image_url }}
         run: terraform apply -auto-approve
