@@ -35,3 +35,4 @@
 - Generated the Terraform boilerplate and a basic Github Actions pipeline for infrastructure (Copilot aided).
 - Generated a Terraform VPC networking boilerplate configuration (Copilot aided).
 - Created the database cluster, using serverless Aurora (PG compatible).
+- Created the AppRunner configuration and connected to the deployment workflow.

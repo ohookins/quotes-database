@@ -84,6 +84,8 @@ jobs:
 
       - name: Terraform Plan
         working-directory: infra
+        env:
+          TF_VAR_image_url: ${{ needs.build-and-push.outputs.image_url }}
         run: terraform plan
 
   tf-apply:
@@ -116,4 +118,6 @@ jobs:
 
       - name: Terraform Apply
         working-directory: infra
+        env:
+          TF_VAR_image_url: ${{ needs.build-and-push.outputs.image_url }}
         run: terraform apply -auto-approve
