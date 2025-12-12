@@ -92,6 +92,8 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    env:
+      image_url: ${{ secrets.ECR_REPO }}:${{ needs.build-and-push.outputs.tag }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -116,5 +118,5 @@ jobs:
       - name: Terraform Apply
         working-directory: infra
         env:
-          TF_VAR_image_url: ${{ needs.build-and-push.outputs.image_url }}
+          TF_VAR_image_url: ${{ env.image_url }}
         run: terraform apply -auto-approve
