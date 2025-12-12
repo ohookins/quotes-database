@@ -53,7 +53,7 @@ jobs:
       - name: Export Docker image URL
         id: export_image_url
         run: |
-          echo "image_url=${{ secrets.ECR_REPO }}:${{ steps.timestamp.outputs.tag }}" >> "$GITHUB_OUTPUT"
+          echo "image_url=${{ secrets.ECR_REPO }}:${{ steps.timestamp.outputs.tag }}" >> $GITHUB_OUTPUT
 
   tf-plan:
     needs: build-and-push
