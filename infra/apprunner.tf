@@ -27,8 +27,9 @@ resource "aws_apprunner_service" "main" {
   }
 
   instance_configuration {
-    cpu    = "256"
-    memory = "512"
+    cpu               = "256"
+    memory            = "512"
+    instance_role_arn = aws_iam_role.apprunner_instance.arn
   }
 
   network_configuration {
@@ -68,51 +69,4 @@ resource "aws_vpc_security_group_egress_rule" "apprunner_to_database" {
   to_port           = 5432
   ip_protocol       = "tcp"
   cidr_ipv4         = local.private_block
-}
-
-resource "aws_iam_role" "apprunner_ecr_access" {
-  name               = "apprunner-ecr-access-role"
-  assume_role_policy = data.aws_iam_policy_document.apprunner_assume_role.json
-}
-
-data "aws_iam_policy_document" "apprunner_assume_role" {
-  statement {
-    principals {
-      type        = "Service"
-      identifiers = ["build.apprunner.amazonaws.com"]
-    }
-    actions = ["sts:AssumeRole"]
-  }
-}
-
-resource "aws_iam_role_policy" "apprunner_ecr_access_policy" {
-  name   = "apprunner-ecr-access-policy"
-  role   = aws_iam_role.apprunner_ecr_access.id
-  policy = data.aws_iam_policy_document.apprunner_ecr_access_policy.json
-}
-
-data "aws_iam_policy_document" "apprunner_ecr_access_policy" {
-  statement {
-    actions = [
-      "ecr:GetAuthorizationToken",
-    ]
-    resources = ["*"]
-  }
-  statement {
-    actions = [
-      "ecr:BatchCheckLayerAvailability",
-      "ecr:GetDownloadUrlForLayer",
-      "ecr:BatchGetImage"
-    ]
-    resources = [aws_ecr_repository.main.arn]
-  }
-}
-
-resource "aws_secretsmanager_secret" "quotes_database_dsn" {
-  name = "quotes-database-dsn"
-}
-
-resource "aws_secretsmanager_secret_version" "quotes_database_dsn" {
-  secret_id     = aws_secretsmanager_secret.quotes_database_dsn.id
-  secret_string = local.dsn
 }
