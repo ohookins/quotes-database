@@ -54,7 +54,6 @@ jobs:
         id: export_image_url
         run: |
           echo "image_url=${{ secrets.ECR_REPO }}:${{ steps.timestamp.outputs.tag }}" >> $GITHUB_OUTPUT
-          cat $GITHUB_OUTPUT
 
   tf-plan:
     needs: build-and-push
@@ -63,6 +62,10 @@ jobs:
       contents: read
       id-token: write
     steps:
+      - name: test outputs
+        run: |
+          echo ${{ needs.build-and-push.outputs.image_url }}
+
       - name: Checkout repository
         uses: actions/checkout@v6
 
