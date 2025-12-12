@@ -26,6 +26,7 @@
 
 - Upon re-reading the specs there is no need for querying. Elastic/Opensearch was completely out of the question due to time constraints, but now I am realising I don't even need `tsvector/tsquery` or even `LIKE` queries.
 - No CSS.
+- Noticed that [Atlas](https://gorm.io/docs/migration.html#Atlas-Integration) would be a better database migration option than what GORM provides natively but I don't think there's time to worry about that.
 
 ## Work log
 
@@ -36,3 +37,5 @@
 - Generated a Terraform VPC networking boilerplate configuration (Copilot aided).
 - Created the database cluster, using serverless Aurora (PG compatible).
 - Created the AppRunner configuration and connected to the deployment workflow.
+- Completed the AppRunner configuration with IAM roles and a secret for database access. App connects to the database now.
+- Split code logic out to a separate struct for handling user requests, start planning database structure migration / data ingestion.

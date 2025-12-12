@@ -4,5 +4,5 @@ output "ecr_url" {
 
 output "service_url" {
   description = "Publicly accessible URL of the AppRunner service"
-  value       = aws_apprunner_service.main.service_url
+  value       = "https://${aws_apprunner_service.main.service_url}"
 }
