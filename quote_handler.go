@@ -2,11 +2,12 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
-	"time"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -28,21 +29,43 @@ func migrate(db *gorm.DB) {
 	log.Println("acquiring advisory lock on database")
 	db.Raw("SELECT pg_try_advisory_lock(0)").Scan(&lock)
 	if !lock {
-		log.Printf("failed to acquire log, skipping migration")
+		log.Printf("failed to acquire log, skipping migration\n")
 		return
 	}
 
+	// Ensure we release the lock
+	defer db.Raw("SELECT pg_advisory_unlock(0)")
+	defer log.Println("removing advisory lock on database")
+
 	// Auto-migrate the schema which should be idempotent
 	log.Println("migrating database schema")
-	db.AutoMigrate(&Quote{})
+	if err := db.AutoMigrate(&Quote{}); err != nil {
+		log.Printf("error automigrating schema: %v\n", err)
+		return
+	}
 
-	// Ingest data here
-	log.Println("ingesting quote data")
-	time.Sleep(5 * time.Second)
+	// Check for existing data
+	var count int64
+	db.Model(&Quote{}).Count(&count)
+	if count > 0 {
+		log.Printf("already have %d records in quote database", count)
+		return
+	}
 
-	// Release lock
-	log.Println("removing advisory lock on database")
-	db.Raw("SELECT pg_advisory_unlock(0)")
+	// Ingestion of quote data if we have none.
+	log.Println("no quote data found, ingesting new quote data")
+	quotes, err := downloadAndParseQuotes()
+	if err != nil {
+		log.Printf("unable to retrieve quotes: %v\n", err)
+		return
+	}
+
+	// Not very efficient for large amounts of data but sufficient for now
+	for _, quote := range quotes {
+		formattedQuote := fmt.Sprintf("%s -- %s", quote.QuoteText, quote.QuoteAuthor)
+		db.Create(&Quote{Id: uuid.New().String(), Data: formattedQuote})
+	}
+	log.Printf("completed ingestion of %d quotes\n", len(quotes))
 }
 
 func renderQuote(text string) ([]byte, error) {
@@ -70,16 +93,11 @@ func (q quoteHandler) handleRequest(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Expires", "0")
 	w.Header().Set("Surrogate-Control", "no-store")
 
-	// var count int64
-	// q.db.Model(&Quote{}).Count(&count)
-	// io.WriteString(w, fmt.Sprintf("%d records\n", count))
+	// Retrieve one quote at random. Doesn't scale to large amounts of data.
+	var quote Quote
+	q.db.Order("RANDOM()").First(&quote)
 
-	// Placeholder
-	quote := `I used to work in a fire hydrant factory.  You couldn't park anywhere near
-the place.
-		-- Steven Wright
-`
-	responseBody, err := renderQuote(quote)
+	responseBody, err := renderQuote(quote.Data)
 	if err != nil {
 		log.Printf("error rendering template: %v", err)
 		w.WriteHeader(500)
