@@ -42,3 +42,4 @@
 - Outline of data ingestion with safety via advisory locking.
 - Add simple HTML page with placeholder quote (Copilot aided).
 - Find source of quotes, ingest into database (Copilot aided).
+- Don't ingest quotes if they already exist, render actual quote data on request.
