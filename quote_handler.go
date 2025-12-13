@@ -29,7 +29,7 @@ func migrate(db *gorm.DB) {
 	log.Println("acquiring advisory lock on database")
 	db.Raw("SELECT pg_try_advisory_lock(0)").Scan(&lock)
 	if !lock {
-		log.Printf("failed to acquire log, skipping migration\n")
+		log.Printf("failed to acquire lock, skipping migration\n")
 		return
 	}
 

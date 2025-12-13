@@ -70,3 +70,12 @@ resource "aws_vpc_security_group_egress_rule" "apprunner_to_database" {
   ip_protocol       = "tcp"
   cidr_ipv4         = local.private_block
 }
+
+resource "aws_vpc_security_group_egress_rule" "apprunner_to_internet" {
+  security_group_id = aws_security_group.apprunner_egress.id
+  description       = "Apprunner egress to internet"
+  from_port         = 443
+  to_port           = 443
+  ip_protocol       = "tcp"
+  cidr_ipv4         = "0.0.0.0/0"
+}
