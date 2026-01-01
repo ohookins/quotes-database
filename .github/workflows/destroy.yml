@@ -33,5 +33,5 @@ jobs:
       - name: Terraform Destroy
         working-directory: infra
         env:
-          TF_VAR_image_url: dummy
+          TF_VAR_image_url:  ${{ secrets.ECR_REPO }}:dummy
         run: terraform destroy -auto-approve
