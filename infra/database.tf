@@ -17,6 +17,7 @@ resource "aws_rds_cluster" "main" {
   master_username        = random_pet.database_username.id
   master_password        = random_password.database_password.result
   vpc_security_group_ids = [aws_security_group.database.id]
+  skip_final_snapshot    = true
 
   serverlessv2_scaling_configuration {
     max_capacity             = 1.0
